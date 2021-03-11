@@ -17,8 +17,8 @@ jobs:
           dotnet-version: '3.1.x'
       - run: dotnet build
       - run: dotnet test
-  publish:
-    if: success()
+  deploy:
+    needs: build
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v1
