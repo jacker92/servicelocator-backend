@@ -28,5 +28,5 @@ jobs:
         APP_NAME: ${{ 'servicelocator-backend' }}
       run: |
         docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
-        heroku container:push web -a $APP_NAME --arg REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} --arg REDIS_ENDPOINT=${{ secrets.REDIS_ENDPOINT }}
+        heroku container:push web -a $APP_NAME
         heroku container:release web -a $APP_NAME
