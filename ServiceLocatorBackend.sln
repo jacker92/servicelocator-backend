@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31025.194
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ServiceLocatorBackend", "ServiceLocatorBackend.csproj", "{5CDF247F-CD73-40DB-959A-5CE0FD7FFEEE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5CDF247F-CD73-40DB-959A-5CE0FD7FFEEE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CDF247F-CD73-40DB-959A-5CE0FD7FFEEE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CDF247F-CD73-40DB-959A-5CE0FD7FFEEE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CDF247F-CD73-40DB-959A-5CE0FD7FFEEE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C2955978-07D3-40C4-BF8C-46D39FCEE5A2}
+	EndGlobalSection
+EndGlobal
