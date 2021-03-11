@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches:
+    - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build and test
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup dotnet
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '3.1.x'
+      - run: dotnet build
+      - run: dotnet test
+  publish:
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build and deploy the Docker image
+      env: 
+        HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        APP_NAME: ${{ 'servicelocator-backend' }}
+      run: |
+        docker login --username=_ --password=$HEROKU_API_KEY registry.heroku.com
+        heroku container:push web -a $APP_NAME --arg REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }} --arg REDIS_ENDPOINT=${{ secrets.REDIS_ENDPOINT }}
+        heroku container:release web -a $APP_NAME
