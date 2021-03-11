@@ -45,6 +45,10 @@ namespace ServiceLocatorBackend
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseCors(options => options
+                                  .AllowAnyOrigin()
+                                  .AllowAnyMethod());
+
             app.UsePathBase(new PathString("/api"));
 
             app.UseHttpsRedirection();
