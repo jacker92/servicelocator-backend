@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using ServiceLocatorBackend.Services;
+using StackExchange.Redis;
 
 namespace ServiceLocatorBackend
 {
@@ -32,6 +33,21 @@ namespace ServiceLocatorBackend
             });
 
             services.AddControllers();
+
+            AddRedis(services);
+        }
+
+        private void AddRedis(IServiceCollection services)
+        {
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.ConfigurationOptions = new ConfigurationOptions
+                {
+                    Password = Configuration["REDIS_PASSWORD"]
+                };
+
+                options.ConfigurationOptions.EndPoints.Add(Configuration["REDIS_ENDPOINT"]);
+            });
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
