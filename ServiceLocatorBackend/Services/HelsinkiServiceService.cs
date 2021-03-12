@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
@@ -9,12 +10,12 @@ namespace ServiceLocatorBackend.Services
 {
     public class HelsinkiServiceService : IHelsinkiServiceService
     {
-        private readonly HttpClient _httpClient;
+        private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDistributedCache _distributedCache;
 
-        public HelsinkiServiceService(HttpClient client, IDistributedCache distributedCache)
+        public HelsinkiServiceService(IHttpClientFactory httpClientFactory, IDistributedCache distributedCache)
         {
-            _httpClient = client;
+            _httpClientFactory = httpClientFactory;
             _distributedCache = distributedCache;
         }
 
@@ -22,25 +23,29 @@ namespace ServiceLocatorBackend.Services
         {
             if (string.IsNullOrWhiteSpace(query)) return null;
 
-            return await _distributedCache.GetRecordAsync<HelsinkiServiceResponse>(query) ?? 
+            return await _distributedCache.GetRecordAsync<HelsinkiServiceResponse>(query) ??
                    await GetServicesFromExternalService(query);
         }
 
         private async Task<HelsinkiServiceResponse> GetServicesFromExternalService(string query)
         {
-            var response = await _httpClient.GetAsync($"search/?format=json&type=unit&q={query}");
+            using (var client = _httpClientFactory.CreateClient())
+            {
+                client.BaseAddress = new Uri("https://api.hel.fi/servicemap/v2/");
+                var response = await client.GetAsync($"search/?format=json&type=unit&q={query}");
 
-            response.EnsureSuccessStatusCode();
-            var responseStream = await response.Content.ReadAsStreamAsync();
+                response.EnsureSuccessStatusCode();
+                var responseStream = await response.Content.ReadAsStreamAsync();
 
-            var result = await JsonSerializer.DeserializeAsync
-                <HelsinkiServiceResponse>(responseStream, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var result = await JsonSerializer.DeserializeAsync
+                    <HelsinkiServiceResponse>(responseStream, new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
 
-            await _distributedCache.SetRecordAsync(query, result);
-            return result;
+                await _distributedCache.SetRecordAsync(query, result);
+                return result;
+            }
         }
     }
 }

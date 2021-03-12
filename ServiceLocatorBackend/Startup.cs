@@ -20,11 +20,7 @@ namespace ServiceLocatorBackend
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddHttpClient<IHelsinkiServiceService, HelsinkiServiceService>(c =>
-            {
-                c.BaseAddress = new Uri("https://api.hel.fi/servicemap/v2/");
-            });
-
+            services.AddHttpClient();
             services.AddControllers();
 
             AddRedis(services);

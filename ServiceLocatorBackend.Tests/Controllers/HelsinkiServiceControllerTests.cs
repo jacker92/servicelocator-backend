@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ServiceLocatorBackend.Tests
+namespace ServiceLocatorBackend.Tests.Controllers
 {
     [TestFixture()]
     public class HelsinkiServiceControllerTests
