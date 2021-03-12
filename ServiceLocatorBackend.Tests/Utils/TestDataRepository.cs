@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ServiceLocatorBackend.Models;
+﻿using ServiceLocatorBackend.Models;
 
 namespace ServiceLocatorBackend.Tests.Utils
 {

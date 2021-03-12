@@ -4,9 +4,6 @@ using NUnit.Framework;
 using ServiceLocatorBackend.Controllers;
 using ServiceLocatorBackend.Models;
 using ServiceLocatorBackend.Services;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace ServiceLocatorBackend.Tests.Controllers

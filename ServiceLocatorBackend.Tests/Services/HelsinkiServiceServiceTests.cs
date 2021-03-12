@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -10,7 +8,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using Moq.Protected;
 using NUnit.Framework;
-using ServiceLocatorBackend.Models;
 using ServiceLocatorBackend.Services;
 using ServiceLocatorBackend.Tests.Utils;
 
