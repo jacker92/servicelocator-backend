@@ -6,7 +6,7 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
 COPY ["./ServiceLocatorBackend/ServiceLocatorBackend.csproj", "."]
-RUN dotnet restore "./ServiceLocatorBackend.csproj"
+RUN dotnet restore "ServiceLocatorBackend.csproj"
 COPY . .
 WORKDIR "/src/."
 RUN dotnet build "ServiceLocatorBackend.csproj" -c Release -o /app/build
