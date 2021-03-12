@@ -5,14 +5,22 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:3.1 AS build
 WORKDIR /src
-COPY ["./ServiceLocatorBackend/ServiceLocatorBackend.csproj", "."]
-RUN dotnet restore "ServiceLocatorBackend.csproj"
+COPY *.sln .
+COPY ServiceLocatorBackend.Tests/*.csproj ServiceLocatorBackend.Tests/
+COPY ServiceLocatorBackend/*.csproj ServiceLocatorBackend/
+RUN dotnet restore
 COPY . .
-WORKDIR "/src/."
-RUN dotnet build "ServiceLocatorBackend.csproj" -c Release -o /app/build
+
+# Tests
+FROM build AS testing
+WORKDIR /src/ServiceLocatorBackend
+RUN dotnet build
+WORKDIR /src/ServiceLocatorBackend.Tests
+RUN dotnet test || exit 1
 
 FROM build AS publish
-RUN dotnet publish "ServiceLocatorBackend.csproj" -c Release -o /app/publish
+WORKDIR /src/ServiceLocatorBackend
+RUN dotnet publish -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
