@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using ServiceLocatorBackend.Services;
 using StackExchange.Redis;
 
 namespace ServiceLocatorBackend
@@ -20,6 +21,8 @@ namespace ServiceLocatorBackend
         {
             services.AddHttpClient();
             services.AddControllers();
+
+            services.AddTransient<IHelsinkiServiceService, HelsinkiServiceService>();
 
             AddRedis(services);
         }
