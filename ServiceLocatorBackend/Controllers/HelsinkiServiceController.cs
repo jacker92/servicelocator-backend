@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using ServiceLocatorBackend.Models;
 using ServiceLocatorBackend.Services;
 
 namespace ServiceLocatorBackend.Controllers
@@ -19,11 +20,11 @@ namespace ServiceLocatorBackend.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<object> Get([FromQuery]string query)
+        public HelsinkiServiceResponse Get([FromQuery]string query)
         {
             _logger.LogInformation($"Invoked get with query: {query}");
             var response = _helsinkiServiceService.GetServices(query).Result;
-            return response?.Results;
+            return response;
         }
     }
 }

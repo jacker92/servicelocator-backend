@@ -72,7 +72,7 @@ namespace ServiceLocatorBackend.Tests.Controllers
 
             var result = _helsinkiServiceController.Get(query);
 
-            Assert.AreEqual(returned.Results, result);
+            Assert.AreEqual(returned, result);
 
             _helsinkiServiceService.Verify(x => x.GetServices(query));
             _helsinkiServiceService.VerifyNoOtherCalls();
