@@ -10,6 +10,8 @@ namespace ServiceLocatorBackend.Services
 {
     public class HelsinkiServiceService : IHelsinkiServiceService
     {
+        private const string SEPARATOR = "|";
+
         private readonly IHttpClientFactory _httpClientFactory;
         private readonly IDistributedCache _distributedCache;
 
@@ -19,20 +21,20 @@ namespace ServiceLocatorBackend.Services
             _distributedCache = distributedCache;
         }
 
-        public async Task<HelsinkiServiceResponse> GetServices(string query)
+        public async Task<HelsinkiServiceResponse> GetServices(string query, string page)
         {
             if (string.IsNullOrWhiteSpace(query)) return null;
 
-            return await _distributedCache.GetRecordAsync<HelsinkiServiceResponse>(query) ??
-                   await GetServicesFromExternalService(query);
+            return await _distributedCache.GetRecordAsync<HelsinkiServiceResponse>($"{query}{SEPARATOR}{page}") ??
+                   await GetServicesFromExternalService(query, page);
         }
 
-        private async Task<HelsinkiServiceResponse> GetServicesFromExternalService(string query)
+        private async Task<HelsinkiServiceResponse> GetServicesFromExternalService(string query, string page)
         {
             using (var client = _httpClientFactory.CreateClient())
             {
                 client.BaseAddress = new Uri("https://api.hel.fi/servicemap/v2/");
-                var response = await client.GetAsync($"search/?format=json&type=unit&q={query}");
+                var response = await client.GetAsync($"search/?format=json&type=unit&q={query}&page={page}");
 
                 response.EnsureSuccessStatusCode();
                 var responseStream = await response.Content.ReadAsStreamAsync();
@@ -43,7 +45,7 @@ namespace ServiceLocatorBackend.Services
                         PropertyNameCaseInsensitive = true
                     });
 
-                await _distributedCache.SetRecordAsync(query, result);
+                await _distributedCache.SetRecordAsync($"{query}{SEPARATOR}{page}", result);
                 return result;
             }
         }

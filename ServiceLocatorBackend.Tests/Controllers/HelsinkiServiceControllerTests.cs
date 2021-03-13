@@ -32,7 +32,7 @@ namespace ServiceLocatorBackend.Tests.Controllers
 
             _helsinkiServiceController.Get(query);
 
-            _helsinkiServiceService.Verify(x => x.GetServices(query));
+            _helsinkiServiceService.Verify(x => x.GetServices(query, "1"));
             _helsinkiServiceService.VerifyNoOtherCalls();
         }
 
@@ -41,14 +41,14 @@ namespace ServiceLocatorBackend.Tests.Controllers
         [TestCase(" ")]
         public void ShouldReturnNull_IfServiceReturnsNull(string query)
         {
-            _helsinkiServiceService.Setup(x => x.GetServices(query)).Returns(
+            _helsinkiServiceService.Setup(x => x.GetServices(query, "1")).Returns(
                 Task.FromResult((HelsinkiServiceResponse)null));
 
             var result = _helsinkiServiceController.Get(query);
 
             Assert.IsNull(result);
 
-            _helsinkiServiceService.Verify(x => x.GetServices(query));
+            _helsinkiServiceService.Verify(x => x.GetServices(query, "1"));
             _helsinkiServiceService.VerifyNoOtherCalls();
         }
 
@@ -67,14 +67,14 @@ namespace ServiceLocatorBackend.Tests.Controllers
                 }
             };
 
-            _helsinkiServiceService.Setup(x => x.GetServices(query)).Returns(
+            _helsinkiServiceService.Setup(x => x.GetServices(query, "1")).Returns(
                 Task.FromResult(returned));
 
             var result = _helsinkiServiceController.Get(query);
 
             Assert.AreEqual(returned, result);
 
-            _helsinkiServiceService.Verify(x => x.GetServices(query));
+            _helsinkiServiceService.Verify(x => x.GetServices(query, "1"));
             _helsinkiServiceService.VerifyNoOtherCalls();
         }
     }

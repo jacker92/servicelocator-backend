@@ -20,10 +20,10 @@ namespace ServiceLocatorBackend.Controllers
         }
 
         [HttpGet]
-        public HelsinkiServiceResponse Get([FromQuery]string query)
+        public HelsinkiServiceResponse Get([FromQuery]string query, [FromQuery]string page = "1")
         {
             _logger.LogInformation($"Invoked get with query: {query}");
-            var response = _helsinkiServiceService.GetServices(query).Result;
+            var response = _helsinkiServiceService.GetServices(query, page).Result;
             return response;
         }
     }

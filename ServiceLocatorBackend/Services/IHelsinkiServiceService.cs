@@ -5,6 +5,6 @@ namespace ServiceLocatorBackend.Services
 {
     public interface IHelsinkiServiceService
     {
-        Task<HelsinkiServiceResponse> GetServices(string query);
+        Task<HelsinkiServiceResponse> GetServices(string query, string page);
     }
 }

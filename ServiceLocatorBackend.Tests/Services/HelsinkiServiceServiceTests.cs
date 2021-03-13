@@ -33,7 +33,7 @@ namespace ServiceLocatorBackend.Tests.Services
         [TestCase("test")]
         public void ShouldThrowJsonException_IfServerDoesNotReturnJsonResponse(string query)
         {
-            Assert.ThrowsAsync<JsonException>(() => _helsinkiServiceService.GetServices(query));
+            Assert.ThrowsAsync<JsonException>(() => _helsinkiServiceService.GetServices(query, "1"));
         }
 
         [Test()]
@@ -41,7 +41,7 @@ namespace ServiceLocatorBackend.Tests.Services
         [TestCase(null)]
         public void ShouldReturnNull_ForNullOrWhiteSpaceQuery(string query)
         {
-            var result = _helsinkiServiceService.GetServices(query);
+            var result = _helsinkiServiceService.GetServices(query, "1");
 
             Assert.IsNull(result.Result);
         }
@@ -52,20 +52,22 @@ namespace ServiceLocatorBackend.Tests.Services
         {
             var response = TestDataRepository.CreateHelsinkiServiceResponse();
 
-            _distributedCache.Setup(x => x.GetAsync(query, default))
+            var key = $"{query}|1";
+
+            _distributedCache.Setup(x => x.GetAsync(key, default))
                 .Returns(
                 Task.FromResult(
                     Encoding.UTF8.GetBytes(
                         JsonSerializer.Serialize(response))));
 
-            var result = _helsinkiServiceService.GetServices(query);
+            var result = _helsinkiServiceService.GetServices(query, "1");
 
             Assert.AreEqual(response.Count, result.Result.Count);
             Assert.AreEqual(response.Next, result.Result.Next);
             Assert.AreEqual(response.Previous, result.Result.Previous);
             Assert.AreEqual(response.Results, result.Result.Results);
 
-            _distributedCache.Verify(x => x.GetAsync(query, default));
+            _distributedCache.Verify(x => x.GetAsync(key, default));
             _distributedCache.VerifyNoOtherCalls();
             _httpClientFactory.VerifyNoOtherCalls();
         }
@@ -74,19 +76,20 @@ namespace ServiceLocatorBackend.Tests.Services
         [TestCase("test")]
         public void ShouldCallApi_IfKeyNotFoundInCache(string query)
         {
+            var key = $"{query}|1";
             var client = SetupMockHttpClient();
             _httpClientFactory.Setup(_ => _.CreateClient(It.IsAny<string>())).Returns(client);
 
-            _distributedCache.Setup(x => x.GetAsync(query, default))
+            _distributedCache.Setup(x => x.GetAsync(key, default))
             .Returns(
                 Task.FromResult((byte[])null));
 
-            var result = _helsinkiServiceService.GetServices(query);
+            var result = _helsinkiServiceService.GetServices(query, "1");
 
             Assert.IsNotNull(result.Result);
 
-            _distributedCache.Verify(x => x.GetAsync(query, default));
-            _distributedCache.Verify(x => x.SetAsync(query, It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
+            _distributedCache.Verify(x => x.GetAsync(key, default));
+            _distributedCache.Verify(x => x.SetAsync(key, It.IsAny<byte[]>(), It.IsAny<DistributedCacheEntryOptions>(), It.IsAny<CancellationToken>()));
             _distributedCache.VerifyNoOtherCalls();
 
             _httpClientFactory.Verify(x => x.CreateClient(It.IsAny<string>()));
