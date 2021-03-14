@@ -52,8 +52,6 @@ namespace ServiceLocatorBackend
 
             app.UsePathBase(new PathString("/api"));
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
