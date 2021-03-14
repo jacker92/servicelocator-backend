@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
@@ -25,19 +23,16 @@ namespace ServiceLocatorBackend.Utils
             {
                 var splittedUri = _configuration["REDIS_ENDPOINT"].Split(':');
 
-                using (var client = new RedisClient(splittedUri[0],
+                using var client = new RedisClient(splittedUri[0],
                                                     int.Parse(splittedUri[1]),
-                                                    _configuration["REDIS_PASSWORD"]))
+                                                    _configuration["REDIS_PASSWORD"]);
+                var response = client.Info;
+
+                if (response != null && response.Any())
                 {
-                    var response = client.Info;
-
-                    if (response != null && response.Any())
-                    {
-                        return Task.FromResult(HealthCheckResult.Healthy($"RedisCheck: Healthy"));
-                    }
-                    return Task.FromResult(HealthCheckResult.Unhealthy($"RedisCheck: Unhealthy"));
-
+                    return Task.FromResult(HealthCheckResult.Healthy($"RedisCheck: Healthy"));
                 }
+                return Task.FromResult(HealthCheckResult.Unhealthy($"RedisCheck: Unhealthy"));
             }
             catch (Exception ex)
             {
