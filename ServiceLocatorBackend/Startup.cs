@@ -1,9 +1,11 @@
-using Microsoft.AspNetCore.Builder;
+ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Diagnostics.HealthChecks;
 using ServiceLocatorBackend.Services;
+using ServiceLocatorBackend.Utils;
 using StackExchange.Redis;
 
 namespace ServiceLocatorBackend
@@ -21,6 +23,9 @@ namespace ServiceLocatorBackend
         {
             services.AddHttpClient();
             services.AddControllers();
+
+            services.AddHealthChecks()
+                .AddCheck<RedisHealthCheck>("Redis healthcheck");
 
             services.AddTransient<IHelsinkiServiceService, HelsinkiServiceService>();
 
@@ -56,6 +61,7 @@ namespace ServiceLocatorBackend
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/health");
                 endpoints.MapControllers();
             });
         }
